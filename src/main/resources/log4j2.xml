@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+	<Properties>
+		<property name="log.error.file.path">/opt/logs/tm-leasing-portal/error/</property>
+		<property name="log.error.file.file">tm-leasing-portal-error.log</property>
+		<property name="log.error.file.pattern">%d{yyyy-MM-dd}-%i.log</property>
+
+		<property name="log.debug.file.path">/opt/logs/tm-leasing-portal/debug/</property>
+		<property name="log.debug.file.file">tm-leasing-portal-debug.log</property>
+		<property name="log.debug.file.pattern">%d{yyyy-MM-dd}-%i.log</property>
+	</Properties>
+	<Appenders>
+		<!-- Console Appender -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<!-- File Appender -->
+		<RollingFile name="ErrorLogFile" fileName="${log.error.file.path}${log.error.file.file}"
+				filePattern="${log.error.file.path}${log.error.file.pattern}">
+			<PatternLayout>
+				<Pattern>[%p] %d %c %M - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="5MB" />
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+			</Policies>
+			<DefaultRolloverStrategy max="99" />
+		</RollingFile>
+		<RollingFile name="DebugLogFile" fileName="${log.debug.file.path}${log.debug.file.file}"
+				filePattern="${log.debug.file.path}${log.debug.file.pattern}">
+			<PatternLayout>
+				<Pattern>[%p] %d %c %M - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="5MB" />
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+			</Policies>
+			<DefaultRolloverStrategy max="99" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="debug" additivity="false">
+			<AppenderRef ref="Console" level="debug"/>
+			<AppenderRef ref="DebugLogFile" level="debug"/>
+		</Logger>
+		<Logger name="my.com.tm.portal.leasing" level="debug" additivity="false">
+			<AppenderRef ref="Console" level="debug"/>
+			<AppenderRef ref="DebugLogFile" level="debug" />
+			<AppenderRef ref="ErrorLogFile" level="debug"/>
+			<AppenderRef ref="DebugLogFile" level="error"/>
+			<AppenderRef ref="Console" level="error"/>
+			<AppenderRef ref="ErrorLogFile" level="error"/>
+		</Logger>
+		<Logger name="org.springframework.web.client.RestTemplate" level="debug" additivity="false">
+			<AppenderRef ref="Console" level="debug"/>
+			<AppenderRef ref="DebugLogFile" level="debug"/>
+		</Logger>
+		<Root>
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>
